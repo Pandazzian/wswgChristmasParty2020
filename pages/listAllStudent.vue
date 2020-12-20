@@ -11,19 +11,24 @@
     </h1>
     
     <h2 class="text-center" style="color:white">Total Participant: {{totalStudent}}</h2>
-    <b-form-group class="pl-2 pr-2" style="color:white" id="input-group-2" label="Filter id:" label-for="id">
-      <b-form-input
-        id="id"
-        type="number"
-        v-model="filterid"
-        placeholder="Enter id"
-      ></b-form-input>
-    </b-form-group>
-    <div class="pl-2 pr-2">
-        <button @click="filter()" type="button" class="mt-2 mb-2 w-100 btn btn-primary">search</button>
+    <div class="row">
+        <b-form-group class="col-lg-6 col-12 pl-2 pr-2" style="color:white" id="input-group-2" label="search Number:" label-for="id">
+        <b-form-input
+            min="0"
+            id="id"
+            type="number"
+            v-model="filterid"
+            placeholder="Enter number"
+        ></b-form-input>
+        </b-form-group>
     </div>
-    <div class="pl-2 pr-2">
-        <button @click="reset()" type="button" class="mt-2 mb-2 w-100 btn btn-secondary">reset</button>
+    <div class="row">
+        <div class="col-lg-2 col-12 pl-2 pr-2">
+            <button @click="filter()" type="button" class="mt-2 mb-2 w-100 btn btn-primary">search</button>
+        </div>
+        <div class="col-lg-2 col-12 pl-2 pr-2">
+            <button @click="reset()" type="button" class="mt-2 mb-2 w-100 btn btn-secondary">reset</button>
+        </div>
     </div>
     <!-- <div class="pl-2 pr-2">
         <button @click="sortParticipant()" type="button" class="mt-2 mb-2 w-100 btn btn-info">sort</button>
@@ -160,6 +165,9 @@ body {
       }
     }
   }
+}
+.row{
+    margin:0;
 }
 .container {
   margin: 0 auto;
