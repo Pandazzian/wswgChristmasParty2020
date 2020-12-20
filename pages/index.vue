@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color:rgb(0,51,89);height:1000px">
+  <div style="background-color:rgb(0,51,89);">
     <div v-for="index in Array(50).keys()" :key="`snow-${index}`" class="snow" />
     <div class="row">
       <div class="pt-2 col-5 ml-auto mr-auto" style="text-align:center;">
@@ -45,7 +45,7 @@
     <div class="pl-2 pr-2 pt-5">
       <b-button @click="submit()" class="w-100" variant="success">Register</b-button>
     </div>
-      <h3 class="text-center pt-3 pb-3" style="color:white">
+      <!-- <h3 class="text-center pt-3 pb-3" style="color:white">
         or
       </h3>
     <div class="pl-2 pr-2">
@@ -69,7 +69,10 @@
           required
         ></b-form-input>
       </b-form-group>
-    </b-modal>
+    </b-modal> -->
+    <div class="text-right pl-2 pr-2 pt-4" style="color:white;font-size:0.75rem">
+      Powered by Pongsawut Naknual tel.0849949261
+    </div>
   </div>
 </template>
 

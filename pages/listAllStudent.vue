@@ -34,7 +34,9 @@
         <button @click="sortParticipant()" type="button" class="mt-2 mb-2 w-100 btn btn-info">sort</button>
     </div> -->
     <studentTable :filteredParticipant="filteredParticipant"/>
-    <div class="pt-5 pb-5"/>
+    <div class="text-right pl-2 pr-2 pt-4" style="color:white;font-size:0.75rem">
+      Powered by Pongsawut Naknual tel.0849949261
+    </div>
   </div>
 </template>
 
