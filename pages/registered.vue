@@ -9,13 +9,16 @@
     <h1 class="text-center pt-5 pb-5" style="color:white">
       WSE Westgate<br/>Christmas Party 2020
     </h1>
+    <!-- ref number -->
+    <h2 class="text-center" style="color:white">Successfully Registered</h2>
+    <h2 class="text-center" style="color:white">Your number is: {{id}}</h2>
     <!-- name surname student code phone number -->
     <b-form-group class="pl-2 pr-2" style="color:white" id="input-group-2" label="Name:" label-for="input-2">
       <b-form-input
         id="name"
         v-model="name"
         placeholder="Enter name"
-        required
+        disabled
       ></b-form-input>
     </b-form-group>
     <b-form-group class="pl-2 pr-2" style="color:white" id="input-group-2" label="Surname:" label-for="input-2">
@@ -23,7 +26,7 @@
         id="surname"
         v-model="surname"
         placeholder="Enter surname"
-        required
+        disabled
       ></b-form-input>
     </b-form-group>
     <b-form-group class="pl-2 pr-2" style="color:white" id="input-group-2" label="Student Code (optional):" label-for="input-2">
@@ -31,6 +34,7 @@
         id="studentCode"
         v-model="studentCode"
         placeholder="Enter student code"
+        disabled
       ></b-form-input>
     </b-form-group>
     <b-form-group class="pl-2 pr-2" style="color:white" id="input-group-2" label="Contact Number:" label-for="input-2">
@@ -39,37 +43,9 @@
         type="number"
         v-model="phoneNumber"
         placeholder="Enter your phone number"
-        required
+        disabled
       ></b-form-input>
     </b-form-group>
-    <div class="pl-2 pr-2 pt-5">
-      <b-button @click="submit()" class="w-100" variant="success">Register</b-button>
-    </div>
-      <h3 class="text-center pt-3 pb-3" style="color:white">
-        or
-      </h3>
-    <div class="pl-2 pr-2">
-      <b-button v-b-modal.modal-1 class="w-100" variant="primary">Already Registered</b-button>
-    </div>
-    <b-modal @ok="already()" id="modal-1" title="Already Registered" ok-title="submit">
-      <b-form-group class="pl-2 pr-2" id="input-group-2" label="Name:" label-for="input-2">
-        <b-form-input
-          id="name"
-          v-model="regName"
-          placeholder="Enter name"
-          required
-        ></b-form-input>
-      </b-form-group>
-      <b-form-group class="pl-2 pr-2" id="input-group-2" label="Registered Phone Number:" label-for="input-2">
-        <b-form-input
-          id="phone"
-          type="number"
-          v-model="regPhone"
-          placeholder="Enter registered phone number"
-          required
-        ></b-form-input>
-      </b-form-group>
-    </b-modal>
   </div>
 </template>
 
@@ -79,74 +55,40 @@ import { db } from '~/plugins/firebase.js'
 export default {
   data(){
     return{
+      id:'',
+      userdata: null,
       name:'',
       surname:'',
       studentCode: null,
       phoneNumber:'',
-      id:null,
-      regPhone : '',
-      regName:'',
-      userswithPhoneNumber: [],
     }
   },
   mounted(){
+      this.getParams()
   },
   methods:{
-    async already(){
-      db.collection("reg-users").where("phoneNumber", "==", this.regPhone)
-      .get()
-      .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-              // doc.data() is never undefined for query doc snapshots
-              console.log(doc.id, " => ", doc.data());
-              this.userswithPhoneNumber.push({id:doc.id,name:doc.data().name})
-          });
-          let id = this.userswithPhoneNumber.filter(each=>each.name == this.regName)[0].id
-          this.$router.push({ path: `/registered?id=${id}` })
-      })
-      .catch(function(error) {
-          console.log("Error getting documents: ", error);
-      });
-    },
-    async submit(){
-      console.log(process.env.VUE_APP_MEASUREMENTID);
-      
-      var sfDocRef = db.collection("runningNumber").doc("number");
-      var myname = this.name;
-      var mysurname = this.surname;
-      var mystudentCode = this.studentCode;
-      var myPhoneNumber = this.phoneNumber;
-      const id = await db.runTransaction(function(transaction) {
-          // This code may get re-run multiple times if there are conflicts.
-          return transaction.get(sfDocRef).then(function(sfDoc) {
-              if (!sfDoc.exists) {
-                  throw "Document does not exist!";
-              }
-              // db.db.collection("runningNumber").doc("number")
-              // Add one person to the city population.
-              // Note: this could be done without a transaction
-              //       by updating the population using FieldValue.increment()
-              var newlatest = sfDoc.data().latest + 1;
-              console.log('newlatest',newlatest);
-              transaction.update(sfDocRef, { latest: newlatest });
-              transaction.set(db.collection('reg-users').doc(newlatest.toString()),{
-                name:myname,
-                surname:mysurname,
-                phoneNumber:myPhoneNumber,
-                studentCode:mystudentCode,
-              })
-              return newlatest;
-          });
-      }).then(function(id) {
-          console.log("Transaction successfully committed!");
-          return id
-      }).catch(function(error) {
-          console.log("Transaction failed: ", error);
-      });
-      if(id != null){
-        this.$router.push({ path: `/registered?id=${id}` })
-      }
-    },
+    getParams(){
+            let calledGetPackage = false
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            this.id = urlParams.get('id')
+            this.getData()
+        },
+    async getData(){
+        let userref = db.collection("reg-users").doc(this.id)
+        this.userdata = await userref.get().then((doc) => {
+            if (doc.exists) {
+                // return doc.data();
+                this.name = doc.data().name;
+                this.surname = doc.data().surname;
+                this.studentCode = doc.data().studentCode;
+                this.phoneNumber = doc.data().phoneNumber;
+            } else {
+                console.log("No such document!");
+            }}).catch(function(error) {
+                console.log("Error getting document:", error);
+            })
+    }
   }
 }
 </script>
@@ -201,13 +143,6 @@ body {
     }
   }
 }
-.logo-padding{
-  padding-right: 8rem;
-  padding-left: 8rem;
-}
-.logo-container{
-  border: 5px solid white;
-}
 .container {
   margin: 0 auto;
   min-height: 100vh;
@@ -216,7 +151,13 @@ body {
   align-items: center;
   text-align: center;
 }
-
+.logo-padding{
+  padding-right: 8rem;
+  padding-left: 8rem;
+}
+.logo-container{
+  border: 5px solid white;
+}
 .title {
   font-family:
     'Quicksand',
