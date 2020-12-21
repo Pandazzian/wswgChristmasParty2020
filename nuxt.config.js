@@ -1,6 +1,5 @@
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
-  ssr: false,
   env:{
     apiKey: process.env.VUE_APP_APIKEY,
     authDomain: process.env.VUE_APP_AUTHDOMAIN,
